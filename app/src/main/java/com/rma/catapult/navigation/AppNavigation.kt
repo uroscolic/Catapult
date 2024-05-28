@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.rma.catapult.catImages.grid.catImageGrid
+import com.rma.catapult.catImages.photoViewer.catPhotoViewer
 import com.rma.catapult.details.details
 import com.rma.catapult.list.catList
 
@@ -24,13 +25,29 @@ fun AppNavigation() {
                 nullable = false
                 type = NavType.StringType
             }),
-            onImageClick = {
-                navController.navigate("photos/$it")
+            onImageClick = { catId, index ->
+                navController.navigate("photos/$catId/$index")
             },
             onClose = {
                 navController.navigateUp()
             }
         )
+        catPhotoViewer(route = "photos/{catId}/{startIndex}",
+            arguments = listOf(
+                navArgument("catId") {
+                    nullable = false
+                    type = NavType.StringType
+                },
+                navArgument("startIndex") {
+                    nullable = false
+                    type = NavType.IntType
+                }
+            ),
+            onClose = {
+                navController.navigateUp()
+            }
+        )
+
 
     }
 

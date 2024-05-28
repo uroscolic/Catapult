@@ -1,5 +1,6 @@
 package com.rma.catapult.repository
 
+import android.util.Log
 import com.rma.catapult.domain.CatInfo
 import com.rma.catapult.domain.CatImage
 import com.rma.catapult.list.api.CatApi
@@ -25,6 +26,7 @@ object Repository {
     }
     suspend fun fetchCatById(id: String) : CatInfo? {
         delay(300)
+
         return getById(id)
     }
 

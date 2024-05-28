@@ -14,17 +14,21 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -36,11 +40,12 @@ import com.rma.catapult.catImages.model.CatImageUiModel
 import com.rma.catapult.core.compose.AppIconButton
 import com.rma.catapult.core.compose.CatImagePreview
 import com.rma.catapult.core.theme.CatapultTheme
+import com.rma.catapult.core.theme.Samsung
 
 fun NavGraphBuilder.catImageGrid(
     route: String,
     arguments: List<NamedNavArgument>,
-    onImageClick: (String) -> Unit,
+    onImageClick: (String, Int) -> Unit,
     onClose: () -> Unit,
 ) = composable(
     route = route,
@@ -57,13 +62,13 @@ fun NavGraphBuilder.catImageGrid(
             }
         }
     )
-
     val state = catImageGridViewModel.state.collectAsState()
 
     CatImageGridScreen(
         state = state.value,
         onImageClick = onImageClick,
         onClose = onClose,
+        catId = catId,
     )
 }
 
@@ -71,13 +76,20 @@ fun NavGraphBuilder.catImageGrid(
 @Composable
 fun CatImageGridScreen(
     state: CatImageGridUiState,
-    onImageClick: (catImageId: String) -> Unit,
+    onImageClick: (catImageId: String, index : Int) -> Unit,
     onClose: () -> Unit,
+    catId: String,
 ) {
     Scaffold(
         topBar = {
-            MediumTopAppBar(
-                title = { Text(text = "Cat Images") },
+            CenterAlignedTopAppBar(
+                title = { Text(
+                    text = "Cat Images",
+                    textAlign = TextAlign.Center,
+                    fontFamily = Samsung,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 24.sp
+                ) },
                 navigationIcon = {
                     AppIconButton(
                         imageVector = Icons.Default.ArrowBack,
@@ -113,7 +125,7 @@ fun CatImageGridScreen(
                             modifier = Modifier
                                 .size(cellSize)
                                 .clickable {
-                                    onImageClick(catImage.id)
+                                    onImageClick(catId, index)
                                 },
                         ) {
                             CatImagePreview(
@@ -162,8 +174,10 @@ fun CatImagePreviewScreen()
             loading = false,
             catImages = catImagesList
 
-        ), onImageClick = {}) {
+        ), onImageClick = { _, _ -> }, onClose = {}, catId = "catId")
             
-        }
+
+
+
     }
 }
