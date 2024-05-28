@@ -1,8 +1,11 @@
 package com.rma.catapult.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.rma.catapult.catImages.grid.catImageGrid
 import com.rma.catapult.details.details
 import com.rma.catapult.list.catList
 
@@ -16,6 +19,18 @@ fun AppNavigation() {
     ) {
         catList(route = "allCats", navController = navController)
         details(route = "details/{id}", navController = navController)
+        catImageGrid(route = "catImages/{catId}",
+            arguments = listOf(navArgument("catId") {
+                nullable = false
+                type = NavType.StringType
+            }),
+            onImageClick = {
+                navController.navigate("photos/$it")
+            },
+            onClose = {
+                navController.navigateUp()
+            }
+        )
 
     }
 

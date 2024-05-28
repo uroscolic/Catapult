@@ -1,6 +1,7 @@
 package com.rma.catapult.repository
 
 import com.rma.catapult.domain.CatInfo
+import com.rma.catapult.domain.CatImage
 import com.rma.catapult.list.api.CatApi
 import com.rma.catapult.networking.retrofit
 import kotlinx.coroutines.delay
@@ -17,6 +18,10 @@ object Repository {
         val allCats = catApi.getAllCats()
         mutableData = allCats.toMutableList()
         return allCats
+    }
+
+    suspend fun fetchCatImages(id: String) : List<CatImage> {
+        return catApi.getCatImages(id = id)
     }
     suspend fun fetchCatById(id: String) : CatInfo? {
         delay(300)

@@ -76,6 +76,9 @@ fun NavGraphBuilder.details(route : String, navController : NavController) {
 
         CatDetailsScreen(
             state = state.value,
+            onGalleryClick = {
+                navController.navigate("catImages/$catId")
+            },
             onBack = {
                 navController.navigateUp()
             }
@@ -90,6 +93,7 @@ val orange = Color.hsl(23f, 0.8f, 0.65f)
 @Composable
 fun CatDetailsScreen(
     state : CatDetailsState,
+    onGalleryClick: () -> Unit,
     onBack: () -> Unit
 ) {
 
@@ -182,6 +186,22 @@ fun CatDetailsScreen(
                     val uriHandler = LocalUriHandler.current
 
                     CustomButton(uriHandler, cat.wikipedia_url)
+                    Button(
+                        modifier = Modifier
+                            .padding(top = 15.dp, bottom = 10.dp),
+                        onClick = onGalleryClick,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = orange
+                        )
+                    ) {
+                            Text(
+                                text = "Gallery",
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Medium,
+                                fontFamily = Samsung
+                            )
+                    }
 
                     ColumnForLongText(label = "Temperament:", text = cat.temperament)
 
@@ -359,7 +379,8 @@ fun DetailsScreenPreview() {
     CatapultTheme {
         CatDetailsScreen(
             state = CatDetailsState(cat = Repository.allData().first(), catId = "1"),
-            onBack = {}
+            onBack = {},
+            onGalleryClick = {}
         )
     }
 }

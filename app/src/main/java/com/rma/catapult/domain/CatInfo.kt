@@ -19,7 +19,7 @@ data class CatInfo(
     val energy_level: Int,
     val rare: Int,
     val wikipedia_url: String = "",
-    val image: Image = Image("", "", 0, 0)
+    val image: CatImage = CatImage("", "", 0, 0)
 )
 @Serializable
 data class Weight(
@@ -27,7 +27,7 @@ data class Weight(
     val metric: String
 )
 @Serializable
-data class Image(
+data class CatImage(
     val id: String,
     val url: String,
     val width: Int,
