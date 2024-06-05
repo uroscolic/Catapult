@@ -2,9 +2,6 @@ package com.rma.catapult.details
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -47,6 +43,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import coil.compose.SubcomposeAsyncImage
+import com.rma.catapult.core.compose.AppIconButton
 import com.rma.catapult.core.compose.Loading
 import com.rma.catapult.core.compose.NoCatFound
 import com.rma.catapult.core.compose.TextMessage
@@ -73,7 +70,6 @@ fun NavGraphBuilder.details(route : String, navController : NavController) {
             },
         )
         val state = catDetailsViewModel.state.collectAsState()
-
         CatDetailsScreen(
             state = state.value,
             onGalleryClick = {
@@ -109,16 +105,9 @@ fun CatDetailsScreen(
                     CenterAlignedTopAppBar(
 
                         navigationIcon = {
-                            Image(
+                            AppIconButton(
                                 imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "Logo",
-                                modifier = Modifier
-                                    .weight(0.1f)
-                                    .padding(start = 8.dp)
-                                    .size(24.dp)
-                                    .clickable {
-                                        onBack()
-                                    }
+                                onClick = onBack,
                             )
                         },
                         title = {
@@ -141,8 +130,8 @@ fun CatDetailsScreen(
                 modifier = Modifier
                     .verticalScroll(scrollState)
                     .fillMaxSize()
-                    .padding(it)
-                    .background(Color.White),
+                    .padding(it),
+                    //.background(Color.White),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top,
             ) {
@@ -288,7 +277,7 @@ fun CharacteristicWithProgressIndicator(label: String, progress: Float) {
                 fontFamily = Samsung,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Normal,
-                color = Color.Black
+                //color = Color.Black
             )
         )
         val strength = progress / 5

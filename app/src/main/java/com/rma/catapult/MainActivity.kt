@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.rma.catapult.repository.Repository
 import com.rma.catapult.core.theme.CatapultTheme
+import com.rma.catapult.core.theme.EnableEdgeToEdge
 import com.rma.catapult.navigation.AppNavigation
 
 class MainActivity : ComponentActivity() {
@@ -14,6 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             CatapultTheme {
+                EnableEdgeToEdge()
                 AppNavigation()
             }
         }

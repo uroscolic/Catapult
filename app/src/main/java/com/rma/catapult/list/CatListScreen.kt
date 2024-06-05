@@ -97,8 +97,7 @@ fun CatListScreen(
     Scaffold(
         topBar = {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.background(Color(0xFFFFFBFE))
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row() {
 
