@@ -7,8 +7,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.rma.catapult.catImages.grid.catImageGrid
 import com.rma.catapult.catImages.photoViewer.catPhotoViewer
-import com.rma.catapult.details.details
-import com.rma.catapult.list.catList
+import com.rma.catapult.cat.details.details
+import com.rma.catapult.cat.list.catList
 
 @Composable
 fun AppNavigation() {

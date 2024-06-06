@@ -1,8 +1,9 @@
-package com.rma.catapult.list
+package com.rma.catapult.cat.list
 
-import com.rma.catapult.list.api.model.CatListUiModel
+import com.rma.catapult.cat.list.api.model.CatListUiModel
 
 data class CatListState(
+    val initialLoading : Boolean = true,
     val loading : Boolean = false,
     val searchMode : Boolean = false,
     val query: String = "",

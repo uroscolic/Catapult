@@ -1,4 +1,4 @@
-package com.rma.catapult.domain
+package com.rma.catapult.cat.domain
 
 import kotlinx.serialization.Serializable
 
@@ -19,7 +19,7 @@ data class CatInfo(
     val energy_level: Int,
     val rare: Int,
     val wikipedia_url: String = "",
-    val image: CatImage = CatImage("", "", 0, 0)
+    val image: CatImage = CatImage(id,"", "", 0, 0)
 )
 @Serializable
 data class Weight(
@@ -28,6 +28,7 @@ data class Weight(
 )
 @Serializable
 data class CatImage(
+    var ownerId: String = "",
     val id: String,
     val url: String,
     val width: Int,

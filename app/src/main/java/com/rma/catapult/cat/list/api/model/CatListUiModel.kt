@@ -1,4 +1,4 @@
-package com.rma.catapult.list.api.model
+package com.rma.catapult.cat.list.api.model
 
 data class CatListUiModel (
     val id: String,

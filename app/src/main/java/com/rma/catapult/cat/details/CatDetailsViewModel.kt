@@ -1,8 +1,8 @@
-package com.rma.catapult.details
+package com.rma.catapult.cat.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rma.catapult.repository.Repository
+import com.rma.catapult.cat.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

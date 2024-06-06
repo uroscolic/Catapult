@@ -1,16 +1,19 @@
-package com.rma.catapult.list
+package com.rma.catapult.cat.list
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rma.catapult.domain.CatInfo
-import com.rma.catapult.list.api.CatListUiEvent
-import com.rma.catapult.list.api.model.CatListUiModel
-import com.rma.catapult.repository.Repository
+import com.rma.catapult.cat.db.Cat
+import com.rma.catapult.cat.domain.CatInfo
+import com.rma.catapult.cat.list.api.CatListUiEvent
+import com.rma.catapult.cat.list.api.model.CatListUiModel
+import com.rma.catapult.cat.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -33,6 +36,8 @@ class CatListViewModel constructor(
     init {
         observeEvents()
         loadCats()
+        observeCats()
+        testRelationship()
     }
 
     private fun observeEvents() {
@@ -43,11 +48,30 @@ class CatListViewModel constructor(
                         setState { copy(searchMode = false, query = "", filteredCats = emptyList()) }
                     }
                     is CatListUiEvent.SearchQueryChanged -> {
-                        setState { copy(searchMode = true, query = it.query, filteredCats = repository.search(it.query).map { it.asCatListUiModel() }) }
+                        setState { copy(searchMode = true, query = it.query, filteredCats = cats.filter { cat ->
+                            cat.name.contains(it.query, ignoreCase = true) })}
 
                     }
                 }
             }
+        }
+    }
+    private fun observeCats() {
+        viewModelScope.launch {
+            setState { copy(initialLoading = true) }
+            repository.observeAllCats()
+                .distinctUntilChanged()
+                .collect {
+                    setState {
+                        copy(initialLoading = false,
+                            cats = it.map { it.asCatListUiModel()}) }
+                }
+        }
+    }
+    private fun testRelationship() {
+        viewModelScope.launch {
+            val catWithImages = repository.getCatWithImages(catId = "abys")
+            Log.d("VIDEO", catWithImages.toString())
         }
     }
 
@@ -56,8 +80,7 @@ class CatListViewModel constructor(
             setState { copy(loading = true) }
             try {
                 withContext(Dispatchers.IO) {
-                    val cats = repository.fetchAllCats().map { it.asCatListUiModel() }
-                    setState { copy(cats = cats) }
+                    repository.fetchAllCats()
                 }
             } catch (e: Exception) {
                 setState { copy(error = e)}
@@ -66,7 +89,7 @@ class CatListViewModel constructor(
             }
         }
     }
-    private fun CatInfo.asCatListUiModel() = CatListUiModel(
+    private fun Cat.asCatListUiModel() = CatListUiModel(
         id = this.id,
         name = this.name,
         alt_names = this.alt_names,

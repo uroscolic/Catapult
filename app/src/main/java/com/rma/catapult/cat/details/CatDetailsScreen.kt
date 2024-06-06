@@ -1,4 +1,4 @@
-package com.rma.catapult.details
+package com.rma.catapult.cat.details
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -47,7 +47,7 @@ import com.rma.catapult.core.compose.AppIconButton
 import com.rma.catapult.core.compose.Loading
 import com.rma.catapult.core.compose.NoCatFound
 import com.rma.catapult.core.compose.TextMessage
-import com.rma.catapult.repository.Repository
+import com.rma.catapult.cat.repository.Repository
 import com.rma.catapult.core.theme.CatapultTheme
 import com.rma.catapult.core.theme.Samsung
 
@@ -361,7 +361,7 @@ fun RowForShortText(label: String, text: String) {
     }
 }
 
-
+/*
 @Composable
 @Preview
 fun DetailsScreenPreview() {
@@ -372,4 +372,4 @@ fun DetailsScreenPreview() {
             onGalleryClick = {}
         )
     }
-}
+}*/

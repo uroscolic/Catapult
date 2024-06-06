@@ -1,8 +1,8 @@
-package com.rma.catapult.repository
+package com.rma.catapult.cat.repository
 
-import com.rma.catapult.domain.CatInfo
-import com.rma.catapult.domain.Weight
-import com.rma.catapult.list.api.model.CatListUiModel
+import com.rma.catapult.cat.domain.CatInfo
+import com.rma.catapult.cat.domain.Weight
+import com.rma.catapult.cat.list.api.model.CatListUiModel
 
 val SampleData = listOf(
     CatInfo(

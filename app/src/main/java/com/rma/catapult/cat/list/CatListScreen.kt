@@ -1,4 +1,4 @@
-package com.rma.catapult.list
+package com.rma.catapult.cat.list
 
 import android.annotation.SuppressLint
 import android.util.Log
@@ -54,9 +54,9 @@ import com.rma.catapult.core.compose.Loading
 import com.rma.catapult.core.compose.TextMessage
 import com.rma.catapult.core.theme.CatapultTheme
 import com.rma.catapult.core.theme.Samsung
-import com.rma.catapult.list.api.CatListUiEvent
-import com.rma.catapult.list.api.model.CatListUiModel
-import com.rma.catapult.repository.SampleDataUiModel
+import com.rma.catapult.cat.list.api.CatListUiEvent
+import com.rma.catapult.cat.list.api.model.CatListUiModel
+import com.rma.catapult.cat.repository.SampleDataUiModel
 import com.rma.catapult.R
 
 

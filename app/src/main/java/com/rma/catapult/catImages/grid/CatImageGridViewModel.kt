@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rma.catapult.catImages.grid.CatImageGridContract.CatImageGridUiState
 import com.rma.catapult.catImages.model.CatImageUiModel
-import com.rma.catapult.domain.CatImage
-import com.rma.catapult.repository.Repository
+import com.rma.catapult.cat.domain.CatImage
+import com.rma.catapult.cat.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
