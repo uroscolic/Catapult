@@ -19,7 +19,21 @@ fun AppNavigation() {
         navController = navController,
         startDestination = "allCats",
     ) {
-        catList(route = "allCats", navController = navController)
+        catList(
+            route = "allCats",
+            onProfileClick = {
+                navController.navigate("profile")
+            },
+            onEditProfileClick = {
+                navController.navigate("editProfile")
+            },
+            onLeaderboardClick = {
+                navController.navigate("leaderboard")
+            },
+            onCatSelected = { cat ->
+                navController.navigate("details/${cat.id}")
+            }
+        )
         details(route = "details/{id}", navController = navController)
         catImageGrid(route = "catImages/{catId}",
             arguments = listOf(navArgument("catId") {

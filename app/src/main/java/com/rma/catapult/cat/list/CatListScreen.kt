@@ -7,62 +7,85 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ElevatedSuggestionChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.rma.catapult.core.compose.Loading
 import com.rma.catapult.core.compose.TextMessage
-import com.rma.catapult.core.theme.CatapultTheme
 import com.rma.catapult.core.theme.Samsung
 import com.rma.catapult.cat.list.api.CatListUiEvent
 import com.rma.catapult.cat.list.api.model.CatListUiModel
-import com.rma.catapult.cat.repository.SampleDataUiModel
-import com.rma.catapult.R
+import com.rma.catapult.core.compose.AppIconButton
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-fun NavGraphBuilder.catList(route : String, navController : NavController) {
+fun NavGraphBuilder.catList(
+    route : String,
+    onProfileClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
+    onLeaderboardClick: () -> Unit,
+    onCatSelected: (CatListUiModel) -> Unit
+) {
     composable(route) {
 
         val catListViewModel = hiltViewModel<CatListViewModel>()
@@ -70,12 +93,14 @@ fun NavGraphBuilder.catList(route : String, navController : NavController) {
 
         CatListScreen(
             state = state,
-            onCatSelected = { cat ->
-                navController.navigate("details/${cat.id}")
-            },
+            onCatSelected = onCatSelected,
             eventPublisher = { event ->
                 catListViewModel.setEvent(event)
-            }
+            },
+            onProfileClick = onProfileClick,
+            onEditProfileClick = onEditProfileClick,
+            onLeaderboardClick = onLeaderboardClick
+
         )
     }
 }
@@ -87,13 +112,184 @@ fun NavGraphBuilder.catList(route : String, navController : NavController) {
 fun CatListScreen(
     state : CatListState,
     onCatSelected: (CatListUiModel) -> Unit,
-    eventPublisher: (CatListUiEvent) -> Unit
+    eventPublisher: (CatListUiEvent) -> Unit,
+    drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
+    onProfileClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
+    onLeaderboardClick: () -> Unit
+
 ) {
+    val uiScope = rememberCoroutineScope()
     var query by remember { mutableStateOf("") }
     val keyboard = LocalSoftwareKeyboardController.current
     BackHandler (enabled = state.searchMode) {
         eventPublisher(CatListUiEvent.ClearSearch)
         query = ""
+    }
+    BackHandler (enabled = drawerState.isOpen) {
+        uiScope.launch {
+            drawerState.close()
+        }
+    }
+    ModalNavigationDrawer(
+        modifier = Modifier,
+        drawerState = drawerState,
+        drawerContent = {
+            CatListDrawer(
+                onProfileClick = {
+                    uiScope.launch {
+                        drawerState.close()
+                    }
+                    onProfileClick()
+                },
+                onEditProfileClick = {
+                    uiScope.launch {
+                        drawerState.close()
+                    }
+                    onEditProfileClick()
+                },
+                onLeaderboardClick = {
+                    uiScope.launch {
+                        drawerState.close()
+                    }
+                    onLeaderboardClick()
+                }
+            )
+        },
+        content = {
+            CatListScaffold(
+                query,
+                eventPublisher,
+                state,
+                keyboard,
+                state.error,
+                onCatSelected,
+                onDrawerMenuClick = {
+                    uiScope.launch {
+                        drawerState.open()
+                    }
+                }
+            )
+        }
+    )
+
+}
+
+
+@Composable
+private fun AppDrawerMenuItem(
+    icon: ImageVector,
+    text: String,
+) {
+    Row {
+        Icon(imageVector = icon, contentDescription = null)
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            text = text,
+        )
+    }
+}
+
+@Composable
+private fun AppDrawerActionItem(
+    icon: ImageVector,
+    text: String,
+    onClick: (() -> Unit)? = null,
+) {
+    ListItem(
+        modifier = Modifier.clickable(
+            enabled = onClick != null,
+            onClick = { onClick?.invoke() }
+        ),
+        leadingContent = {
+            Icon(imageVector = icon, contentDescription = null)
+        },
+        headlineContent = {
+            Text(text = text)
+        }
+    )
+}
+
+@Composable
+private fun CatListDrawer(
+    onProfileClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
+    onLeaderboardClick: () -> Unit,
+) {
+    BoxWithConstraints {
+
+        ModalDrawerSheet(
+            modifier = Modifier.width(maxWidth * 3 / 4),
+        ) {
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentAlignment = Alignment.BottomStart,
+                ) {
+                    Text(
+                        modifier = Modifier.padding(all = 16.dp),
+                        text = "Uros",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Medium,
+
+                    )
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
+
+                    AppDrawerActionItem(
+                        icon = Icons.Default.Person,
+                        text = "Profile",
+                        onClick = onProfileClick,
+                    )
+                    AppDrawerActionItem(
+                        icon = Icons.Default.Edit,
+                        text = "Edit Profile",
+                        onClick = onEditProfileClick,
+                    )
+                    AppDrawerActionItem(
+                        icon = Icons.Default.Star,
+                        text = "Leaderboard",
+                        onClick = onLeaderboardClick,
+                    )
+
+                    /*NavigationDrawerItem(
+                        label = {
+                            Text(
+                                modifier = Modifier.padding(horizontal = 16.dp),
+                                text = "Passwords",
+                            )
+                        },
+                        icon = {
+                            Icon(imageVector = Icons.Default.Lock, contentDescription = null)
+                        },
+                        selected = false,
+                        onClick = {
+
+                        },
+                    )*/
+                }
+            }
+        }
+    }
+}
+
+@ExperimentalMaterial3Api
+@Composable
+private fun CatListScaffold(
+    searchQuery: String,
+    eventPublisher: (CatListUiEvent) -> Unit,
+    state: CatListState,
+    keyboard: SoftwareKeyboardController?,
+    error: Throwable?,
+    onCatSelected: (CatListUiModel) -> Unit,
+    onDrawerMenuClick: () -> Unit
+) {
+    var query by remember {
+        mutableStateOf(searchQuery)
+
     }
     Scaffold(
         topBar = {
@@ -104,14 +300,7 @@ fun CatListScreen(
 
                     CenterAlignedTopAppBar(
                         navigationIcon = {
-                            Image(
-                                painter = painterResource(id = R.drawable.cat),
-                                contentDescription = "Logo",
-                                modifier = Modifier
-                                    .weight(0.1f)
-                                    .padding(start = 8.dp)
-                                    .size(24.dp)
-                            )
+                            AppIconButton(imageVector = Icons.Default.Menu, onClick = onDrawerMenuClick)
                         },
                         title = {
                             Text(
@@ -155,18 +344,19 @@ fun CatListScreen(
                         )
                     },
                     trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable {
-                                    eventPublisher(CatListUiEvent.ClearSearch)
-                                    query = ""
-                                    Log.d("aaabbb - X", state.searchMode.toString())
-                                    Log.d("aaabbb - X", state.query)
-                                }
-                        )
+                        if (query.isNotEmpty())
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Close",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clickable {
+                                        eventPublisher(CatListUiEvent.ClearSearch)
+                                        query = ""
+                                        Log.d("aaabbb - X", state.searchMode.toString())
+                                        Log.d("aaabbb - X", state.query)
+                                    }
+                            )
                     },
                 ) {}
                 Spacer(modifier = Modifier.padding(2.dp))
@@ -194,7 +384,9 @@ fun CatListScreen(
 
                     state.error != null -> {
                         item {
-                            TextMessage("Error: ${state.error.message}")
+                            if (error != null) {
+                                TextMessage("Error: ${error.message}")
+                            }
                         }
                     }
 
@@ -205,7 +397,7 @@ fun CatListScreen(
                     }
 
                     else -> {
-                        items(if(state.searchMode) state.filteredCats else state.cats) { cat ->
+                        items(if (state.searchMode) state.filteredCats else state.cats) { cat ->
                             key(cat.id) {
                                 CatListItem(
                                     cat = cat,
@@ -221,7 +413,6 @@ fun CatListScreen(
         }
     )
 }
-
 
 
 @Composable
@@ -316,7 +507,7 @@ fun CatListScreenPreview() {
         ) {}
     }
 }*/
-
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
@@ -331,4 +522,4 @@ fun CatListScreenPreviewNotLoaded() {
 
         ) {}
     }
-}
+}*/
