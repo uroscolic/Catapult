@@ -1,6 +1,7 @@
 package com.rma.catapult.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
@@ -53,3 +54,8 @@ fun AppNavigation() {
 
 }
 
+inline val SavedStateHandle.catId: String
+    get() = checkNotNull(get("catId")) { "catId required" }
+
+inline val SavedStateHandle.id: String
+    get() = checkNotNull(get("id")) { "id required" }

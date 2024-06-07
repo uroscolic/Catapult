@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -60,15 +61,9 @@ fun NavGraphBuilder.details(route : String, navController : NavController) {
         }
     )
     ){
-        navBackStackEntry -> val catId = navBackStackEntry.arguments?.getString("id") ?: throw IllegalStateException("Missing ID")
-        val catDetailsViewModel = viewModel<CatDetailsViewModel>(
-            factory = object : ViewModelProvider.Factory {
-                @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return CatDetailsViewModel(catId = catId) as T
-                }
-            },
-        )
+        navBackStackEntry ->
+        val catDetailsViewModel = hiltViewModel<CatDetailsViewModel>(navBackStackEntry)
+        val catId = navBackStackEntry.arguments?.getString("id") ?: throw IllegalStateException("Missing ID")
         val state = catDetailsViewModel.state.collectAsState()
         CatDetailsScreen(
             state = state.value,
@@ -169,7 +164,7 @@ fun CatDetailsScreen(
                     )
                     RowForShortText(label = "Origin:", text = cat.origin)
                     RowForShortText(label = "Life Span:", text = cat.life_span)
-                    RowForShortText(label = "Weight:", text = cat.weight.metric)
+                    RowForShortText(label = "Weight:", text = (cat.weight.metric + " kg"))
                     RowForShortText(label = "Rare:", text = if(cat.rare == 0) "No" else "Yes")
 
                     val uriHandler = LocalUriHandler.current

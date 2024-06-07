@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -36,20 +37,12 @@ fun NavGraphBuilder.catPhotoViewer(
     route = route,
     arguments = arguments,
 ) { navBackStackEntry ->
-    val catId = navBackStackEntry.arguments?.getString("catId")
-        ?: throw IllegalStateException("catId required")
+
+    val catPhotoViewerViewModel = hiltViewModel<CatPhotoViewerViewModel>(navBackStackEntry)
 
     val startIndex = navBackStackEntry.arguments?.getInt("startIndex")
         ?: throw IllegalStateException("startIndex required")
 
-    val catPhotoViewerViewModel = viewModel<CatPhotoViewerViewModel>(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return CatPhotoViewerViewModel(catId = catId) as T
-            }
-        }
-    )
 
     val state = catPhotoViewerViewModel.state.collectAsState()
     CatPhotoViewer(

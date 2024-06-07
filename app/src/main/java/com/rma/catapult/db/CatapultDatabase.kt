@@ -2,7 +2,7 @@ package com.rma.catapult.db
 
 import android.content.Context
 import androidx.room.Room
-
+/*
 object CatapultDatabase {
 
     lateinit var database: AppDatabase
@@ -18,4 +18,4 @@ object CatapultDatabase {
             .build()
     }
 
-}
+}*/

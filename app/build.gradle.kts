@@ -4,6 +4,8 @@ plugins {
     id("androidx.navigation.safeargs.kotlin")
     kotlin("plugin.serialization") version "1.9.23"
     id("com.google.devtools.ksp") version "1.9.23-1.0.20"
+    id("androidx.room")
+    id("com.google.dagger.hilt.android")
 
 }
 
@@ -56,6 +58,9 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
@@ -83,6 +88,14 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    // Hilt
+    val hiltVersion = "2.51"
+    implementation("com.google.dagger:hilt-android:$hiltVersion")
+    ksp("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    // Hilt Compose Navigation support (hiltViewModel factory)
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
 
     // Room
     val room_version = "2.6.1"

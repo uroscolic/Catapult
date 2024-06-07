@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,17 +50,11 @@ fun NavGraphBuilder.catImageGrid(
     route = route,
     arguments = arguments,
 ) { navBackStackEntry ->
+    val catImageGridViewModel = hiltViewModel<CatImageGridViewModel>(navBackStackEntry)
     val catId = navBackStackEntry.arguments?.getString("catId")
         ?: throw IllegalStateException("catId required")
 
-    val catImageGridViewModel = viewModel<CatImageGridViewModel>(
-        factory = object : ViewModelProvider.Factory {
-            @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return CatImageGridViewModel(catId = catId) as T
-            }
-        }
-    )
+
     val state = catImageGridViewModel.state.collectAsState()
     CatImageGridScreen(
         state = state.value,
