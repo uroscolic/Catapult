@@ -1,5 +1,8 @@
 package com.rma.catapult.navigation
 
+import android.util.Log
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavType
@@ -10,6 +13,7 @@ import com.rma.catapult.catImages.grid.catImageGrid
 import com.rma.catapult.catImages.photoViewer.catPhotoViewer
 import com.rma.catapult.cat.details.details
 import com.rma.catapult.cat.list.catList
+import com.rma.catapult.user.register.register
 
 @Composable
 fun AppNavigation() {
@@ -17,7 +21,7 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = "allCats",
+        startDestination = "register",
     ) {
         catList(
             route = "allCats",
@@ -60,6 +64,14 @@ fun AppNavigation() {
             ),
             onClose = {
                 navController.navigateUp()
+            }
+        )
+        register(route = "register",
+            onRegisterClick = {
+                navController.navigate("allCats")
+            },
+            alreadyRegistered = {
+                navController.navigate("allCats")
             }
         )
 

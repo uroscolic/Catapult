@@ -119,6 +119,9 @@ dependencies {
     // Coil
     implementation("io.coil-kt:coil-compose:2.6.0")
 
+    // DataStore
+    implementation("androidx.datastore:datastore:1.1.1")
+
     // Gson
     implementation ("com.google.code.gson:gson:2.8.8")
 
