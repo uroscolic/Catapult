@@ -47,7 +47,7 @@ fun AppDrawer(
 @Composable
 fun AppDrawer(
     state: AppDrawerContract.UiState,
-    eventPublisher: (AppDrawerContract.UiEvent) -> Unit,
+    eventPublisher: (AppDrawerUiEvent.UserEdited) -> Unit,
     onDrawerDestinationClick: (AppDrawerDestination) -> Unit,
 ) {
     Surface {

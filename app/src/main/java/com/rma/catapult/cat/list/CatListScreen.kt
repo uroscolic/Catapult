@@ -46,6 +46,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -91,6 +92,7 @@ fun NavGraphBuilder.catList(
         val catListViewModel = hiltViewModel<CatListViewModel>()
         val state by catListViewModel.state.collectAsState()
 
+
         CatListScreen(
             state = state,
             onCatSelected = onCatSelected,
@@ -122,6 +124,8 @@ fun CatListScreen(
     val uiScope = rememberCoroutineScope()
     var query by remember { mutableStateOf("") }
     val keyboard = LocalSoftwareKeyboardController.current
+
+
     BackHandler (enabled = state.searchMode) {
         eventPublisher(CatListUiEvent.ClearSearch)
         query = ""
@@ -202,7 +206,10 @@ private fun AppDrawerActionItem(
             onClick = { onClick?.invoke() }
         ),
         leadingContent = {
-            Icon(imageVector = icon, contentDescription = null)
+            Icon(imageVector = icon,
+                contentDescription = null,
+                tint = if (text == "Leaderboard") Color.Yellow else Color.Unspecified
+            )
         },
         headlineContent = {
             Text(text = text)
@@ -210,12 +217,14 @@ private fun AppDrawerActionItem(
     )
 }
 
+
 @Composable
 private fun CatListDrawer(
     onProfileClick: () -> Unit,
     onEditProfileClick: () -> Unit,
-    onLeaderboardClick: () -> Unit,
+    onLeaderboardClick: () -> Unit
 ) {
+
     BoxWithConstraints {
 
         ModalDrawerSheet(
@@ -225,12 +234,13 @@ private fun CatListDrawer(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(200.dp)
+                        .padding(16.dp),
                     contentAlignment = Alignment.BottomStart,
                 ) {
                     Text(
                         modifier = Modifier.padding(all = 16.dp),
-                        text = "Uros",
+                        text = "Catapult",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Medium,
 

@@ -1,11 +1,9 @@
-package com.rma.catapult.user.register
+package com.rma.catapult.user.edit
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rma.catapult.cat.list.api.CatListUiEvent
-import com.rma.catapult.drawer.AppDrawerContract
 import com.rma.catapult.user.auth.AuthStore
-import com.rma.catapult.user.register.UserRegisterContract.RegisterState
+import com.rma.catapult.user.edit.UserEditContract.EditState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,32 +13,32 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class UserRegisterViewModel  @Inject constructor(
+class UserEditViewModel @Inject constructor(
     private val authStore: AuthStore
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(RegisterState())
+    private val _state = MutableStateFlow(EditState())
     val state = _state.asStateFlow()
-    private val events = MutableSharedFlow<UserRegisterUiEvent>()
+    private val events = MutableSharedFlow<UserEditUiEvent>()
 
-    private fun setState(reducer: RegisterState.() -> RegisterState) = _state.update(reducer)
+    private fun setState(reducer: EditState.() -> EditState) = _state.update(reducer)
 
-    fun setEvent(event: UserRegisterUiEvent){
+    fun setEvent(event: UserEditUiEvent){
         viewModelScope.launch {
             events.emit(event)
         }
     }
     init {
-        checkIfUserIsRegistered()
+        getUserInfo()
         observeEvents()
     }
 
     private fun observeEvents() {
         viewModelScope.launch {
-            events.collect{ it ->
+            events.collect{
                 when (it) {
-                    is UserRegisterUiEvent.UserRegistered -> {
-                        setState { copy(registered = true,
+                    is UserEditUiEvent.UserEdited -> {
+                        setState { copy(
                             name = it.user.name,
                             surname = it.user.surname,
                             email = it.user.email,
@@ -52,26 +50,14 @@ class UserRegisterViewModel  @Inject constructor(
             }
         }
     }
-    private fun emptyData(){
-        viewModelScope.launch {
-            authStore.updateAuthData {
-                this.copy(
-                    name = "",
-                    surname = "",
-                    nickname = "",
-                    email = ""
-                )
-            }
-        }
-        setState { copy(registered = false, name = "", surname = "", email = "", nickname = "") }
-    }
-    private fun checkIfUserIsRegistered() {
+    private fun getUserInfo() {
         val authData = authStore.authData.value
         if (authData.name.isNotEmpty() && authData.surname.isNotEmpty() && authData.nickname.isNotEmpty() && authData.email.isNotEmpty()) {
-            setState { copy(registered = true, name = authData.name, surname = authData.surname,
+            setState { copy(name = authData.name, surname = authData.surname,
                 email = authData.email, nickname = authData.nickname) }
         }
     }
+
 
     private fun updateUser(name: String, surname: String, nickname: String, email: String) {
         viewModelScope.launch {

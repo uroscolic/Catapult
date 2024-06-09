@@ -13,6 +13,7 @@ import com.rma.catapult.catImages.grid.catImageGrid
 import com.rma.catapult.catImages.photoViewer.catPhotoViewer
 import com.rma.catapult.cat.details.details
 import com.rma.catapult.cat.list.catList
+import com.rma.catapult.user.edit.editUser
 import com.rma.catapult.user.register.register
 
 @Composable
@@ -72,6 +73,14 @@ fun AppNavigation() {
             },
             alreadyRegistered = {
                 navController.navigate("allCats")
+            }
+        )
+        editUser(route = "editProfile",
+            onEditClick = {
+                navController.navigate("allCats")
+            },
+            onClose = {
+                navController.navigateUp()
             }
         )
 

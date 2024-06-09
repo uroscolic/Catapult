@@ -1,7 +1,17 @@
-package com.rma.catapult.user.register
+package com.rma.catapult.user.edit
 
-import androidx.compose.foundation.layout.*
+import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -9,7 +19,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,56 +27,51 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.rma.catapult.cat.details.CatDetailsScreen
-import com.rma.catapult.cat.details.CatDetailsViewModel
 import com.rma.catapult.cat.details.orange
+import com.rma.catapult.core.compose.AppIconButton
 import com.rma.catapult.core.theme.Samsung
+import com.rma.catapult.user.edit.UserEditContract.EditState
 import com.rma.catapult.user.model.User
-import com.rma.catapult.user.register.UserRegisterContract.RegisterState
 
-
-fun NavGraphBuilder.register(
+fun NavGraphBuilder.editUser(
     route : String,
-    onRegisterClick: () -> Unit,
-    alreadyRegistered: () -> Unit
+    onEditClick: () -> Unit,
+    onClose: () -> Unit
 ) {
 
     composable(route){
 
-        val userRegisterViewModel = hiltViewModel<UserRegisterViewModel>()
-        val state = userRegisterViewModel.state.collectAsState()
-        if(state.value.registered){
-            alreadyRegistered()
-        }
-        UserRegisterScreen(
-            onRegisterClick = onRegisterClick,
-            eventPublisher = { userRegisterViewModel.setEvent(it) },
+        val userEditViewModel = hiltViewModel<UserEditViewModel>()
+        val state = userEditViewModel.state.collectAsState()
+
+
+        UserEditScreen(
+            onEditClick = onEditClick,
+            onClose = onClose,
+            eventPublisher = { userEditViewModel.setEvent(it) },
+            state = state.value
         )
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserRegisterScreen(
-    onRegisterClick: () -> Unit,
-    eventPublisher: (UserRegisterUiEvent) -> Unit
+fun UserEditScreen(
+    onEditClick: () -> Unit,
+    onClose: () -> Unit,
+    eventPublisher: (UserEditUiEvent) -> Unit,
+    state : EditState
 ) {
-    var name by remember { mutableStateOf("") }
-    var surname by remember { mutableStateOf("") }
-    var nickname by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(state.name) }
+    var surname by remember { mutableStateOf(state.surname) }
+    var nickname by remember { mutableStateOf(state.nickname) }
+    var email by remember { mutableStateOf(state.email) }
     val isNameValid = name.all { it.isLetter() }
     val isSurnameValid = surname.all { it.isLetter() }
     val isNicknameValid = nickname.all { it.isLetterOrDigit() || it == '_' }
@@ -76,11 +80,16 @@ fun UserRegisterScreen(
             surname.isNotEmpty() && isSurnameValid &&
             nickname.isNotEmpty() && isNicknameValid &&
             email.isNotEmpty() && isEmailValid
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Register", fontFamily = Samsung, fontWeight = FontWeight.Medium) }
+                navigationIcon = {
+                    AppIconButton(
+                        imageVector = Icons.Default.ArrowBack,
+                        onClick = onClose,
+                    )
+                },
+                title = { Text("Edit Profile", fontFamily = Samsung, fontWeight = FontWeight.Medium) }
             )
         }
     ) { padding ->
@@ -124,7 +133,7 @@ fun UserRegisterScreen(
             Button(
                 onClick = {
                     eventPublisher(
-                        UserRegisterUiEvent.UserRegistered(
+                        UserEditUiEvent.UserEdited(
                             User(
                                 name = name,
                                 surname = surname,
@@ -133,7 +142,7 @@ fun UserRegisterScreen(
                             )
                         )
                     )
-                    onRegisterClick()
+                    onEditClick()
                 },
                 enabled = enabled,
                 modifier = Modifier.width(200.dp),
@@ -141,14 +150,8 @@ fun UserRegisterScreen(
                     containerColor = orange
                 )
             ) {
-                Text("Register", fontFamily = Samsung)
+                Text("Save changes", fontFamily = Samsung)
             }
         }
     }
 }
-/*
-@Preview
-@Composable
-fun UserRegisterScreenPreview() {
-    UserRegisterScreen(onRegisterClick = {}, hiltViewModel())
-}*/

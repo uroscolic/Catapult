@@ -3,9 +3,7 @@ package com.rma.catapult.drawer
 interface AppDrawerContract {
 
     data class UiState(
-        val username: String = "",
+        val nickname: String = "",
     )
-    sealed class UiEvent {
-        data object LogoutConfirmed : UiEvent()
-    }
+
 }
