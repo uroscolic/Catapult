@@ -40,7 +40,7 @@ class Repository @Inject constructor(
         return getById(id)
     }
 
-    fun getById(id: String) : Cat? {
+    private fun getById(id: String) : Cat? {
         return database.catDao().getById(id)
     }
 

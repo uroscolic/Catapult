@@ -1,6 +1,7 @@
 package com.rma.catapult.cat.list.api.di
 
 import com.rma.catapult.cat.list.api.CatApi
+import com.rma.catapult.networking.di.qualifiers.TheCatApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,5 +15,5 @@ import javax.inject.Singleton
 object CatsModule {
     @Provides
     @Singleton
-    fun provideCatApi(retrofit: Retrofit): CatApi = retrofit.create()
+    fun provideCatApi(@TheCatApi retrofit: Retrofit): CatApi = retrofit.create()
 }

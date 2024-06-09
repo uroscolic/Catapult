@@ -13,6 +13,7 @@ import com.rma.catapult.catImages.grid.catImageGrid
 import com.rma.catapult.catImages.photoViewer.catPhotoViewer
 import com.rma.catapult.cat.details.details
 import com.rma.catapult.cat.list.catList
+import com.rma.catapult.leaderboard.leaderboard
 import com.rma.catapult.user.edit.editUser
 import com.rma.catapult.user.register.register
 
@@ -83,6 +84,7 @@ fun AppNavigation() {
                 navController.navigateUp()
             }
         )
+        leaderboard(route = "leaderboard")
 
 
     }

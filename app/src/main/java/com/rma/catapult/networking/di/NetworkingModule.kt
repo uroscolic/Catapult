@@ -1,6 +1,8 @@
 package com.rma.catapult.networking.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.rma.catapult.networking.di.qualifiers.LeaderboardApiAnnotation
+import com.rma.catapult.networking.di.qualifiers.TheCatApi
 import com.rma.catapult.networking.serialization.AppJson
 import dagger.Module
 import dagger.Provides
@@ -10,6 +12,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -39,8 +42,21 @@ object NetworkingModule {
     }
 
     @Singleton
+    @LeaderboardApiAnnotation
     @Provides
-    fun provideRetrofitClient(
+    fun provideRetrofitClientLeaderboard(
+        okHttpClient: OkHttpClient,
+    ) : Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://rma.finlab.rs/")
+            .client(okHttpClient)
+            .addConverterFactory(AppJson.asConverterFactory("application/json".toMediaType()))
+            .build()
+    }
+    @Singleton
+    @TheCatApi
+    @Provides
+    fun provideRetrofitClientCat(
         okHttpClient: OkHttpClient,
     ) : Retrofit {
         return Retrofit.Builder()
