@@ -15,7 +15,7 @@ import com.rma.catapult.catImages.db.CatPhotoDao
         Cat::class,
         CatPhoto::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 @TypeConverters(Converter::class)

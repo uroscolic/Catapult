@@ -19,7 +19,9 @@ data class CatInfo(
     val energy_level: Int,
     val rare: Int,
     val wikipedia_url: String = "",
-    val image: CatImage = CatImage(id,"", "", 0, 0)
+    val image: CatImage = CatImage(id,"", "", 0, 0),
+    var avg_weight: Double = 0.0,
+    var avg_life_span: Double = 0.0
 )
 @Serializable
 data class Weight(

@@ -19,6 +19,11 @@ class Repository @Inject constructor(
 
     suspend fun fetchAllCats() {
         val allCats = catApi.getAllCats()
+        for(cat in allCats){
+            cat.avg_weight = (cat.weight.metric.split(" ")[0].toDouble() + cat.weight.metric.split(" ")[2].toDouble()) / 2
+            cat.avg_life_span = (cat.life_span.split(" ")[0].toDouble() + cat.life_span.split(" ")[2].toDouble()) / 2
+        }
+
         database.catDao().insertAll(cats = allCats.map{it.asCatDbModel()})
 
     }

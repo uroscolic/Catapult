@@ -31,6 +31,8 @@ fun CatInfo.asCatDbModel(): Cat {
             url = this.image.url,
             width = this.image.width,
             height = this.image.height
-        )
+        ),
+        avg_weight = this.avg_weight,
+        avg_life_span = this.avg_life_span
     )
 }

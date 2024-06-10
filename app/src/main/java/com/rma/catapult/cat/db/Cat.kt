@@ -32,5 +32,7 @@ data class Cat (
         url = "",
         width = 0,
         height = 0,
-    )
+    ),
+    var avg_weight: Double = 0.0,
+    var avg_life_span: Double = 0.0
 )
