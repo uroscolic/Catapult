@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +26,6 @@ import androidx.navigation.compose.composable
 import com.rma.catapult.core.compose.AppIconButton
 import com.rma.catapult.core.theme.Samsung
 import com.rma.catapult.leaderboard.api.model.LeaderboardUiModel
-
 
 fun NavGraphBuilder.leaderboard(
     route: String,
@@ -44,7 +44,6 @@ fun LeaderboardScreen(
     state: LeaderboardState,
     onClose: () -> Unit,
 ) {
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -80,12 +79,39 @@ fun LeaderboardScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(16.dp)
                     ) {
-                        items(state.results) { result ->
+                        item {
+                            Text(
+                                text = "Top 3",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                fontFamily = Samsung,
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
+
+                        items(state.results.take(3)) { result ->
                             key(result.id) {
-                                LeaderboardItem(
-                                    result
-                                )
-                                Spacer(modifier = Modifier.padding(16.dp))
+                                LeaderboardItem(result, topThree = true)
+                                Spacer(modifier = Modifier.padding(8.dp))
+                            }
+                        }
+
+                        item {
+                            Divider(
+                                color = Color.Gray,
+                                thickness = 2.dp,
+                                modifier = Modifier
+                                    .padding(vertical = 8.dp)
+                                    .shadow(2.dp, shape = MaterialTheme.shapes.medium)
+
+                            )
+                            Spacer(modifier = Modifier.padding(8.dp))
+                        }
+
+                        items(state.results.drop(3)) { result ->
+                            key(result.id) {
+                                LeaderboardItem(result, topThree = false)
+                                Spacer(modifier = Modifier.padding(8.dp))
                             }
                         }
                     }
@@ -96,8 +122,7 @@ fun LeaderboardScreen(
 }
 
 @Composable
-fun LeaderboardItem(entry: LeaderboardUiModel) {
-
+fun LeaderboardItem(entry: LeaderboardUiModel, topThree: Boolean) {
     val BronzeStart = Color(0xFFCD7F32) // Bronze color
     val BronzeEnd = Color(0xFF8B4513) // Darker Bronze color
 
@@ -113,14 +138,23 @@ fun LeaderboardItem(entry: LeaderboardUiModel) {
         3 -> listOf(BronzeStart, BronzeEnd)
         else -> listOf(Color.Transparent, Color.Transparent)
     }
+
+    val scoreColor = when (entry.id) {
+        1 -> Color(0xFFD4AF37) // Gold color
+        2 -> Color(0xFFC0C0C0) // Silver color
+        3 -> Color(0xFFCD7F32) // Bronze color
+        else -> Color.Unspecified
+    }
+    val weight = if (topThree) FontWeight.Bold else FontWeight.Normal
+
     Card(
         modifier = Modifier.fillMaxWidth(),
-        border = BorderStroke(
+        border = if (topThree) BorderStroke(
             2.dp,
             brush = Brush.linearGradient(
                 colors = colorGradient
             )
-        )
+        ) else null
     ) {
         Row(
             modifier = Modifier
@@ -128,7 +162,6 @@ fun LeaderboardItem(entry: LeaderboardUiModel) {
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Icon(
                 imageVector = Icons.Default.Star,
                 contentDescription = "Trophy",
@@ -138,7 +171,7 @@ fun LeaderboardItem(entry: LeaderboardUiModel) {
             Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(text = entry.nickname, fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                Text(text = "Score: ${entry.result}", fontSize = 16.sp)
+                Text(text = "Score: ${entry.result}", fontSize = 16.sp, color = scoreColor, fontWeight = weight)
                 Text(text = "Position: ${entry.id}", fontSize = 16.sp)
                 Text(text = "Total Appearances: ${entry.numberOfQuizzesPlayed}", fontSize = 16.sp)
             }
