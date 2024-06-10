@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -20,10 +22,12 @@ import com.rma.catapult.user.register.register
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-
+    val appNavigationViewModel = hiltViewModel<AppNavigationViewModel>()
+    val state = appNavigationViewModel.state.collectAsState()
+    val start = if(state.value.registered) "allCats" else "register"
     NavHost(
         navController = navController,
-        startDestination = "register",
+        startDestination = start,
     ) {
         catList(
             route = "allCats",
@@ -70,10 +74,9 @@ fun AppNavigation() {
         )
         register(route = "register",
             onRegisterClick = {
-                navController.navigate("allCats")
-            },
-            alreadyRegistered = {
-                navController.navigate("allCats")
+                navController.navigate("allCats") {
+                    popUpTo("register") { inclusive = true }
+                }
             }
         )
         editUser(route = "editProfile",
@@ -84,7 +87,11 @@ fun AppNavigation() {
                 navController.navigateUp()
             }
         )
-        leaderboard(route = "leaderboard")
+        leaderboard(route = "leaderboard",
+            onClose = {
+                navController.navigateUp()
+            }
+        )
 
 
     }

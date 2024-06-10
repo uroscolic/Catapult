@@ -31,13 +31,12 @@ class UserRegisterViewModel  @Inject constructor(
         }
     }
     init {
-        checkIfUserIsRegistered()
         observeEvents()
     }
 
     private fun observeEvents() {
         viewModelScope.launch {
-            events.collect{ it ->
+            events.collect {
                 when (it) {
                     is UserRegisterUiEvent.UserRegistered -> {
                         setState { copy(registered = true,
@@ -64,13 +63,6 @@ class UserRegisterViewModel  @Inject constructor(
             }
         }
         setState { copy(registered = false, name = "", surname = "", email = "", nickname = "") }
-    }
-    private fun checkIfUserIsRegistered() {
-        val authData = authStore.authData.value
-        if (authData.name.isNotEmpty() && authData.surname.isNotEmpty() && authData.nickname.isNotEmpty() && authData.email.isNotEmpty()) {
-            setState { copy(registered = true, name = authData.name, surname = authData.surname,
-                email = authData.email, nickname = authData.nickname) }
-        }
     }
 
     private fun updateUser(name: String, surname: String, nickname: String, email: String) {

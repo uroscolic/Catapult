@@ -40,17 +40,12 @@ import com.rma.catapult.user.register.UserRegisterContract.RegisterState
 
 fun NavGraphBuilder.register(
     route : String,
-    onRegisterClick: () -> Unit,
-    alreadyRegistered: () -> Unit
+    onRegisterClick: () -> Unit
 ) {
 
     composable(route){
 
         val userRegisterViewModel = hiltViewModel<UserRegisterViewModel>()
-        val state = userRegisterViewModel.state.collectAsState()
-        if(state.value.registered){
-            alreadyRegistered()
-        }
         UserRegisterScreen(
             onRegisterClick = onRegisterClick,
             eventPublisher = { userRegisterViewModel.setEvent(it) },

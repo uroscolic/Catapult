@@ -22,7 +22,7 @@ class LeaderboardRepository @Inject constructor(
         for (result in results) {
             result.totalTimesPlayed = countResultsForUser(result.nickname)
         }
-
+        position = 1
         return results
     }
      private fun countResultsForUser(nickname: String): Int {
