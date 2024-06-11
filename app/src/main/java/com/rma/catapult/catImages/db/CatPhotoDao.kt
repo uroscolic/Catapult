@@ -12,4 +12,12 @@ interface CatPhotoDao {
 
     @Query("SELECT * FROM CatPhoto WHERE CatPhoto.ownerId = :catId")
     fun observeCatPhotos(catId: String): Flow<List<CatPhoto>>
+
+    @Query("""
+            SELECT * FROM CatPhoto 
+            WHERE CatPhoto.ownerId = :catId 
+            ORDER BY RANDOM()
+            LIMIT 1
+            """)
+    suspend fun getRandomCatPhoto(catId: String): CatPhoto
 }

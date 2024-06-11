@@ -29,5 +29,21 @@ interface CatDao {
 
     @Query("SELECT * FROM Cat WHERE id = :id")
     fun getById(id: String): Cat?
+//@Query("""
+//    SELECT c1.*, c2.*
+//    FROM Cat c1
+//    JOIN Cat c2 ON c1.avg_weight != c2.avg_weight
+//    ORDER BY RANDOM()
+//    LIMIT 1
+//""")
+//    suspend fun getTwoRandomCatsWithDifferentWeights(): List<Cat>?
+//    @Query("""
+//    SELECT c1.*, c2.*
+//    FROM Cat c1
+//    JOIN Cat c2 ON c1.avg_life_span != c2.avg_life_span
+//    ORDER BY RANDOM()
+//    LIMIT 1
+//""")
+//    suspend fun getTwoRandomCatsWithDifferentLifeSpans(): List<Cat>?
 
 }

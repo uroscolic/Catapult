@@ -16,6 +16,7 @@ import com.rma.catapult.catImages.photoViewer.catPhotoViewer
 import com.rma.catapult.cat.details.details
 import com.rma.catapult.cat.list.catList
 import com.rma.catapult.leaderboard.leaderboard
+import com.rma.catapult.quiz.questions.questions
 import com.rma.catapult.user.edit.editUser
 import com.rma.catapult.user.register.register
 
@@ -27,12 +28,12 @@ fun AppNavigation() {
     val start = if(state.value.registered) "allCats" else "register"
     NavHost(
         navController = navController,
-        startDestination = start,
+        startDestination = start
     ) {
         catList(
             route = "allCats",
             onProfileClick = {
-                navController.navigate("profile")
+                navController.navigate("questions")
             },
             onEditProfileClick = {
                 navController.navigate("editProfile")
@@ -90,6 +91,11 @@ fun AppNavigation() {
         leaderboard(route = "leaderboard",
             onClose = {
                 navController.navigateUp()
+            }
+        )
+        questions(route = "questions",
+            toCatList = {
+                navController.navigate("allCats")
             }
         )
 

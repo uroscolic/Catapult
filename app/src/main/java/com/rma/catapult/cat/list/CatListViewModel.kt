@@ -39,9 +39,10 @@ class CatListViewModel @Inject constructor(
     init {
         observeEvents()
         loadCats()
+
         observeCats()
-        testRelationship()
     }
+
 
     private fun observeEvents() {
         viewModelScope.launch {
@@ -69,6 +70,7 @@ class CatListViewModel @Inject constructor(
                         copy(initialLoading = false,
                             cats = it.map { it.asCatListUiModel()}) }
                 }
+
         }
     }
     private fun testRelationship() {
@@ -92,6 +94,7 @@ class CatListViewModel @Inject constructor(
             }
         }
     }
+
     private fun Cat.asCatListUiModel() = CatListUiModel(
         id = this.id,
         name = this.name,
