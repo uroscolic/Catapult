@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,11 +43,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import coil.compose.SubcomposeAsyncImage
-import com.rma.catapult.core.compose.AppIconButton
-import com.rma.catapult.core.compose.Loading
 import com.rma.catapult.core.compose.NoCatFound
 import com.rma.catapult.core.compose.TextMessage
 import com.rma.catapult.cat.repository.Repository
+import com.rma.catapult.core.compose.AppIconButton
+import com.rma.catapult.core.compose.Loading
 import com.rma.catapult.core.theme.CatapultTheme
 import com.rma.catapult.core.theme.Samsung
 
@@ -169,7 +168,8 @@ fun CatDetailsScreen(
 
                     val uriHandler = LocalUriHandler.current
 
-                    CustomButton(uriHandler, cat.wikipedia_url)
+                    if(cat.wikipedia_url.isNotEmpty())
+                        CustomButton(uriHandler, cat.wikipedia_url)
                     Button(
                         modifier = Modifier
                             .padding(top = 15.dp, bottom = 10.dp),

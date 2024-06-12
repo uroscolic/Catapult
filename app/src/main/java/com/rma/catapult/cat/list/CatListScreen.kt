@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Lock
@@ -29,6 +30,9 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
@@ -70,6 +74,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.rma.catapult.cat.details.orange
 import com.rma.catapult.core.compose.Loading
 import com.rma.catapult.core.compose.TextMessage
 import com.rma.catapult.core.theme.Samsung
@@ -85,7 +90,8 @@ fun NavGraphBuilder.catList(
     onProfileClick: () -> Unit,
     onEditProfileClick: () -> Unit,
     onLeaderboardClick: () -> Unit,
-    onCatSelected: (CatListUiModel) -> Unit
+    onCatSelected: (CatListUiModel) -> Unit,
+    onQuizClick: () -> Unit
 ) {
     composable(route) {
 
@@ -101,7 +107,8 @@ fun NavGraphBuilder.catList(
             },
             onProfileClick = onProfileClick,
             onEditProfileClick = onEditProfileClick,
-            onLeaderboardClick = onLeaderboardClick
+            onLeaderboardClick = onLeaderboardClick,
+            onQuizClick = onQuizClick
 
         )
     }
@@ -118,13 +125,14 @@ fun CatListScreen(
     drawerState: DrawerState = rememberDrawerState(DrawerValue.Closed),
     onProfileClick: () -> Unit,
     onEditProfileClick: () -> Unit,
-    onLeaderboardClick: () -> Unit
+    onLeaderboardClick: () -> Unit,
+    onQuizClick: () -> Unit
 
 ) {
     val uiScope = rememberCoroutineScope()
     var query by remember { mutableStateOf("") }
     val keyboard = LocalSoftwareKeyboardController.current
-
+    var showDialog by remember { mutableStateOf(false) }
 
     BackHandler (enabled = state.searchMode) {
         eventPublisher(CatListUiEvent.ClearSearch)
@@ -135,6 +143,51 @@ fun CatListScreen(
             drawerState.close()
         }
     }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = {
+                Text(text = "Starting the Quiz",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    fontFamily = Samsung
+                ) },
+            text = {
+                Text(text = "Are you ready?",
+                    fontFamily = Samsung
+
+                ) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDialog = false
+                        onQuizClick()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = orange
+                    )
+                ) {
+                    Text(text = "Yes",
+                        fontFamily = Samsung
+                    )
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = { showDialog = false },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = orange
+                    )
+                ) {
+                    Text(text = "No",
+                        fontFamily = Samsung
+                    )
+                }
+            }
+        )
+    }
+
     ModalNavigationDrawer(
         modifier = Modifier,
         drawerState = drawerState,
@@ -157,6 +210,12 @@ fun CatListScreen(
                         drawerState.close()
                     }
                     onLeaderboardClick()
+                },
+                onQuizClick = {
+                    uiScope.launch {
+                        drawerState.close()
+                    }
+                    showDialog = true
                 }
             )
         },
@@ -222,7 +281,8 @@ private fun AppDrawerActionItem(
 private fun CatListDrawer(
     onProfileClick: () -> Unit,
     onEditProfileClick: () -> Unit,
-    onLeaderboardClick: () -> Unit
+    onLeaderboardClick: () -> Unit,
+    onQuizClick: () -> Unit
 ) {
 
     BoxWithConstraints {
@@ -263,6 +323,11 @@ private fun CatListDrawer(
                         icon = Icons.Default.Star,
                         text = "Leaderboard",
                         onClick = onLeaderboardClick,
+                    )
+                    AppDrawerActionItem(
+                        icon = Icons.Default.Favorite,
+                        text = "Quiz",
+                        onClick = onQuizClick,
                     )
 
                     /*NavigationDrawerItem(

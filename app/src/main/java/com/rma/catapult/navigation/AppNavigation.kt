@@ -33,13 +33,16 @@ fun AppNavigation() {
         catList(
             route = "allCats",
             onProfileClick = {
-                navController.navigate("questions")
+                navController.navigate("profile")
             },
             onEditProfileClick = {
                 navController.navigate("editProfile")
             },
             onLeaderboardClick = {
                 navController.navigate("leaderboard")
+            },
+            onQuizClick = {
+                navController.navigate("questions")
             },
             onCatSelected = { cat ->
                 navController.navigate("details/${cat.id}")

@@ -3,6 +3,7 @@ package com.rma.catapult.leaderboard.repository
 import android.util.Log
 import com.rma.catapult.leaderboard.api.LeaderboardApi
 import com.rma.catapult.leaderboard.model.Leaderboard
+import com.rma.catapult.leaderboard.model.LeaderboardPost
 import javax.inject.Inject
 
 class LeaderboardRepository @Inject constructor(
@@ -29,4 +30,7 @@ class LeaderboardRepository @Inject constructor(
         val results = _results
         return results.filter { it.nickname == nickname }.size
      }
+    suspend fun postResult(leaderboardPost: LeaderboardPost) {
+        leaderboardApi.postResult(leaderboardPost)
+    }
 }
