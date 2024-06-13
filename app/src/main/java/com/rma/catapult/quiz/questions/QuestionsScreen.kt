@@ -119,7 +119,20 @@ fun EndOfQuizScreen(score: Int,
         Text(text = "Your Score: $points/100", fontSize = 20.sp, fontWeight = FontWeight.Medium)
 
         Spacer(modifier = Modifier.height(16.dp))
-
+        var flag by remember {
+            mutableStateOf(false)
+        }
+        if(!flag) {
+            flag = true
+            eventPublisher(
+                LeaderboardUiEvent.AddResultLocally(
+                    LeaderboardPost(
+                        result = points,
+                        category = 3
+                    )
+                )
+            )
+        }
         Button(onClick = {
             eventPublisher(LeaderboardUiEvent.ShareResult(LeaderboardPost(result = points, category = 3)))
             onHomeClick()
@@ -134,8 +147,8 @@ fun EndOfQuizScreen(score: Int,
             Text("Home", fontSize = 18.sp, fontWeight = FontWeight.Bold)
         }
         Spacer(modifier = Modifier.height(32.dp))
-        Text(text = if (points < 35) "Better luck next time!"
-        else if (points >= 35 && points < 70) "Nice!" else "Wow, you are a genius!",
+        Text(text = if (points < 40) "Better luck next time!"
+        else if (points >= 40 && points < 75) "Nice!" else "Wow, you are a genius!",
             fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
     }

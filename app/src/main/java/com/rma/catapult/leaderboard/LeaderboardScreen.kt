@@ -127,7 +127,7 @@ fun LeaderboardItem(entry: LeaderboardUiModel, topThree: Boolean) {
     val BronzeEnd = Color(0xFF8B4513) // Darker Bronze color
 
     val GoldStart = Color(0xFFD1B000) // Gold color
-    val GoldEnd = Color(0xFFFFD700) // Lighter Gold color
+    val GoldEnd = Color(0xFFFDD708) // Lighter Gold color
 
     val SilverStart = Color(0xFFC0C0C0) // Silver color
     val SilverEnd = Color(0xFFA9A9A9) // Darker Silver color

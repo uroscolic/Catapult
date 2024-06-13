@@ -1,23 +1,22 @@
 package com.rma.catapult.leaderboard
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rma.catapult.cat.db.Cat
-import com.rma.catapult.cat.list.api.CatListUiEvent
-import com.rma.catapult.cat.list.api.model.CatListUiModel
-import com.rma.catapult.drawer.AppDrawerContract
 import com.rma.catapult.leaderboard.api.model.LeaderboardUiModel
 import com.rma.catapult.leaderboard.model.Leaderboard
 import com.rma.catapult.leaderboard.model.LeaderboardPost
+import com.rma.catapult.leaderboard.model.LeaderboardResponse
+import com.rma.catapult.leaderboard.model.Result
 import com.rma.catapult.leaderboard.repository.LeaderboardRepository
 import com.rma.catapult.user.auth.AuthStore
+import com.rma.catapult.user.model.QuizResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -56,7 +55,6 @@ class LeaderboardViewModel @Inject constructor(
                         results = results.map { it.asLeaderboardUiModel() })
                 }
             } catch (e: Exception) {
-                // Handle the error here
                 setState { copy(loading = false, error = e) }
             } finally {
                 setState { copy(loading = false) }
@@ -74,20 +72,64 @@ class LeaderboardViewModel @Inject constructor(
                             it.leaderboardPost
                         )
                     }
+                    is LeaderboardUiEvent.AddResultLocally -> {
+                        val quizResult = QuizResult(
+                            position = 0,
+                            category = it.leaderboardPost.category,
+                            result = it.leaderboardPost.result,
+                            createdAt = System.currentTimeMillis()
+                        )
+                        updateUserResults(quizResult)
+                    }
                 }
             }
         }
     }
-    private fun postResult(leaderboardPost: LeaderboardPost) {
+    private fun postResult(leaderboardPost: LeaderboardPost){
+        val response = mutableStateOf(LeaderboardResponse(Result(0,"",0.0,0),0))
         viewModelScope.launch {
             try {
-                repository.postResult(leaderboardPost)
+                response.value = repository.postResult(leaderboardPost)
+                val quizResult = QuizResult(
+                    position = response.value.ranking,
+                    category = response.value.result.category,
+                    result = response.value.result.result,
+                    createdAt = response.value.result.createdAt
+                )
+                updateRank(quizResult)
             } catch (e: Exception) {
                 throw e
             }
         }
     }
-
+    private fun updateUserResults(quizResult: QuizResult){
+        viewModelScope.launch {
+            authStore.updateAuthData {
+                this.copy(
+                    results = this.results + quizResult,
+                    bestResult = if (this.bestResult.result < quizResult.result) quizResult else this.bestResult,
+                )
+            }
+        }
+    }
+    private fun updateRank(quizResult: QuizResult){
+        viewModelScope.launch {
+            authStore.updateAuthData {
+                val updatedResults =
+                    this.results.mapIndexed { index, result ->
+                        if (index == this.results.size - 1) {
+                            result.copy(position = quizResult.position)
+                        } else {
+                            result
+                        }
+                    }
+                this.copy(
+                    results = updatedResults,
+                    bestRank = if (this.bestRank > quizResult.position) quizResult.position else this.bestRank
+                )
+            }
+        }
+    }
     private fun Leaderboard.asLeaderboardUiModel() = LeaderboardUiModel(
         id = this.id,
         nickname = this.nickname,

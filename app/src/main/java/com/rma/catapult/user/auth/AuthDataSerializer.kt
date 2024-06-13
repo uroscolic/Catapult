@@ -1,7 +1,8 @@
-package com.rma.catapult.user.auth.di
+package com.rma.catapult.user.auth
 
 import androidx.datastore.core.Serializer
 import com.rma.catapult.networking.serialization.AppJson
+import com.rma.catapult.user.model.QuizResult
 import com.rma.catapult.user.model.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,7 +13,9 @@ import java.io.OutputStream
 class AuthDataSerializer : Serializer<User> {
 
     private val json: Json = AppJson
-    override val defaultValue: User = User("", "", "", "")
+    override val defaultValue: User =
+        User("", "", "", "",
+            emptyList(), QuizResult(0, 0, 0.0, 0))
 
     override suspend fun readFrom(input: InputStream): User {
         val text = String(input.readBytes(), Charsets.UTF_8)

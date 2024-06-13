@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
+import com.rma.catapult.user.auth.AuthDataSerializer
 import com.rma.catapult.user.model.User
 import dagger.Module
 import dagger.Provides
