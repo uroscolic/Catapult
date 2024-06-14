@@ -150,7 +150,7 @@ fun LeaderboardItem(entry: LeaderboardUiModel, topThree: Boolean) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         border = if (topThree) BorderStroke(
-            2.dp,
+            3.dp,
             brush = Brush.linearGradient(
                 colors = colorGradient
             )

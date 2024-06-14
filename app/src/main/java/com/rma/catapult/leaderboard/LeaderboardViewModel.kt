@@ -1,5 +1,6 @@
 package com.rma.catapult.leaderboard
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -73,6 +74,7 @@ class LeaderboardViewModel @Inject constructor(
                         )
                     }
                     is LeaderboardUiEvent.AddResultLocally -> {
+                        Log.d("LeaderboardViewModel", "observeEvents: ${it.leaderboardPost.result}")
                         val quizResult = QuizResult(
                             position = 0,
                             category = it.leaderboardPost.category,
@@ -105,11 +107,22 @@ class LeaderboardViewModel @Inject constructor(
     private fun updateUserResults(quizResult: QuizResult){
         viewModelScope.launch {
             authStore.updateAuthData {
+                Log.d("LeaderboardViewModel", "updateRank1: ")
+
+
+                Log.d("LeaderboardViewModel", "updateRank2: ${this.bestRank} ${quizResult.position}")
+
+
                 this.copy(
                     results = this.results + quizResult,
                     bestResult = if (this.bestResult.result < quizResult.result) quizResult else this.bestResult,
+                    //bestResult = quizResult
                 )
+
             }
+            Log.d("LeaderboardViewModel", "updateRank3: ")
+
+
         }
     }
     private fun updateRank(quizResult: QuizResult){
@@ -123,6 +136,7 @@ class LeaderboardViewModel @Inject constructor(
                             result
                         }
                     }
+
                 this.copy(
                     results = updatedResults,
                     bestRank = if (this.bestRank > quizResult.position) quizResult.position else this.bestRank

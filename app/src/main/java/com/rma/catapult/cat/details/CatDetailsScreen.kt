@@ -34,9 +34,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -45,10 +42,8 @@ import androidx.navigation.navArgument
 import coil.compose.SubcomposeAsyncImage
 import com.rma.catapult.core.compose.NoCatFound
 import com.rma.catapult.core.compose.TextMessage
-import com.rma.catapult.cat.repository.Repository
 import com.rma.catapult.core.compose.AppIconButton
 import com.rma.catapult.core.compose.Loading
-import com.rma.catapult.core.theme.CatapultTheme
 import com.rma.catapult.core.theme.Samsung
 
 
@@ -77,7 +72,7 @@ fun NavGraphBuilder.details(route : String, navController : NavController) {
 }
 
 
-val orange = Color.hsl(23f, 0.8f, 0.65f)
+val gold = Color(0xFFD1B000)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -175,7 +170,7 @@ fun CatDetailsScreen(
                             .padding(top = 15.dp, bottom = 10.dp),
                         onClick = onGalleryClick,
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = orange
+                            containerColor = gold
                         )
                     ) {
                             Text(
@@ -243,7 +238,7 @@ private fun CustomButton(
             uriHandler.openUri(text)
         },
         colors = ButtonDefaults.buttonColors(
-            containerColor = orange
+            containerColor = gold
         )
     )
     {
@@ -281,7 +276,7 @@ fun CharacteristicWithProgressIndicator(label: String, progress: Float) {
             progress = strength,
             color =
             if(strength >= 0.6f)
-                orange
+                gold
             else
                 Color.hsl(23f, 0.5f, 0.4f),
 
@@ -302,7 +297,7 @@ fun ColumnForLongText(label: String, text: String) {
                 .padding(start = 15.dp, bottom = 10.dp),
             text = label,
             fontSize = 20.sp,
-            color = orange,
+            color = gold,
             fontWeight = FontWeight.Medium
         )
         Text(
@@ -324,7 +319,7 @@ fun RowForShortText(label: String, text: String) {
                 .weight(0.5f),
             text = label,
             fontSize = 20.sp,
-            color = orange,
+            color = gold,
             fontWeight = FontWeight.Medium
         )
         if(text.contains("http")) {

@@ -3,8 +3,6 @@ package com.rma.catapult.cat.list
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -24,8 +22,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -44,13 +40,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -65,16 +59,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.rma.catapult.cat.details.orange
+import com.rma.catapult.cat.details.gold
 import com.rma.catapult.core.compose.Loading
 import com.rma.catapult.core.compose.TextMessage
 import com.rma.catapult.core.theme.Samsung
@@ -165,7 +156,7 @@ fun CatListScreen(
                         onQuizClick()
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = orange
+                        containerColor = gold
                     )
                 ) {
                     Text(text = "Yes",
@@ -177,7 +168,7 @@ fun CatListScreen(
                 Button(
                     onClick = { showDialog = false },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = orange
+                        containerColor = gold
                     )
                 ) {
                     Text(text = "No",
@@ -477,7 +468,7 @@ private fun CatListScaffold(
                                 CatListItem(
                                     cat = cat,
                                     onCatSelected = onCatSelected,
-                                    color = Color.hsl(23f, 0.9f, 0.5f)
+                                    color = gold
                                 )
                                 Spacer(modifier = Modifier.padding(16.dp))
                             }

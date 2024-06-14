@@ -18,6 +18,7 @@ import com.rma.catapult.cat.list.catList
 import com.rma.catapult.leaderboard.leaderboard
 import com.rma.catapult.quiz.questions.questions
 import com.rma.catapult.user.edit.editUser
+import com.rma.catapult.user.profile.profile
 import com.rma.catapult.user.register.register
 
 @Composable
@@ -91,6 +92,15 @@ fun AppNavigation() {
                 navController.navigateUp()
             }
         )
+        profile(route = "profile",
+            onEditClick = {
+                navController.navigate("editProfile")
+            },
+            onClose = {
+                navController.navigateUp()
+            }
+        )
+
         leaderboard(route = "leaderboard",
             onClose = {
                 navController.navigateUp()

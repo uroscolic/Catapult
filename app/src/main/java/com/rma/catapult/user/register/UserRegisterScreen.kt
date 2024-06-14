@@ -9,33 +9,23 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.util.PatternsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.rma.catapult.cat.details.CatDetailsScreen
-import com.rma.catapult.cat.details.CatDetailsViewModel
-import com.rma.catapult.cat.details.orange
+import com.rma.catapult.cat.details.gold
 import com.rma.catapult.core.theme.Samsung
 import com.rma.catapult.user.model.User
-import com.rma.catapult.user.register.UserRegisterContract.RegisterState
 
 
 fun NavGraphBuilder.register(
@@ -133,7 +123,7 @@ fun UserRegisterScreen(
                 enabled = enabled,
                 modifier = Modifier.width(200.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = orange
+                    containerColor = gold
                 )
             ) {
                 Text("Register", fontFamily = Samsung)

@@ -1,6 +1,7 @@
 package com.rma.catapult.quiz.questions
 
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,8 +16,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import coil.compose.AsyncImage
-import com.rma.catapult.cat.details.orange
+import coil.compose.SubcomposeAsyncImage
+import com.rma.catapult.cat.details.gold
 import com.rma.catapult.core.theme.Samsung
 import com.rma.catapult.leaderboard.LeaderboardUiEvent
 import com.rma.catapult.leaderboard.LeaderboardViewModel
@@ -93,8 +94,14 @@ fun QuestionScreen(state: QuestionsState,
                 timeLeft = timeLeft,
             )
         }
-    } else {
-        Text("No questions available")
+    }
+    else {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+        }
     }
 }
 
@@ -107,16 +114,27 @@ fun EndOfQuizScreen(score: Int,
     var points = score * 2.5 * (1 + (timeLeft + 120.0) / 300.0)
     if (points > 100.0)
         points = 100.0
+    Log.d("EndOfQuizScreen", "EndOfQuizScreen: $points")
+    points = (points * 100).toInt() / 100.0
 
-    points = String.format("%.2f", points).toDouble()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(text = if (timeLeft == 0) "Time's Up!" else "Quiz Completed", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-        Text(text = "Your Score: $points/100", fontSize = 20.sp, fontWeight = FontWeight.Medium)
+        Text(text = if (timeLeft == 0) "Time's Up!" else "Quiz Completed",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+
+        )
+        Text(text = "Your Score: $points/100",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Medium,
+            color = MaterialTheme.colorScheme.onBackground
+
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
         var flag by remember {
@@ -137,19 +155,41 @@ fun EndOfQuizScreen(score: Int,
             eventPublisher(LeaderboardUiEvent.ShareResult(LeaderboardPost(result = points, category = 3)))
             onHomeClick()
 
-        }) {
-            Text("Share Result", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = gold
+            )
+        ) {
+            Text("Share Result",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = onHomeClick) {
-            Text("Home", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+        Button(onClick = onHomeClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = gold
+            )
+        ) {
+            Text("Home",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+
+            )
         }
         Spacer(modifier = Modifier.height(32.dp))
         Text(text = if (points < 40) "Better luck next time!"
         else if (points >= 40 && points < 75) "Nice!" else "Wow, you are a genius!",
-            fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+
+        )
 
     }
 }
@@ -210,20 +250,40 @@ fun QuestionContent(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(text = question.text, fontSize = 18.sp, fontWeight = FontWeight.Bold)
 
-                AsyncImage(
+                SubcomposeAsyncImage(
                     model = if(correctOption) question.correctAnswer else question.incorrectAnswer,
                     contentDescription = "option1",
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { onAnswerSelected(correctOption) }
+                        .clickable { onAnswerSelected(correctOption) },
+                    loading = {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(36.dp),
+                            )
+                        }
+                    }
                 )
 
-                AsyncImage(
+                SubcomposeAsyncImage(
                     model = if(correctOption) question.incorrectAnswer else question.correctAnswer,
                     contentDescription = "option2",
                     modifier = Modifier
                         .weight(1f)
-                        .clickable { onAnswerSelected(correctOption) }
+                        .clickable { onAnswerSelected(correctOption) },
+                    loading = {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(36.dp),
+                            )
+                        }
+                    }
                 )
                 Button(
                     onClick = { showDialog = true },
@@ -234,7 +294,7 @@ fun QuestionContent(
                         )
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = orange
+                        containerColor = gold
                     )
                 )
                 if (showDialog) {
@@ -258,7 +318,7 @@ fun QuestionContent(
                                     onGiveUp()
                                 },
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = orange
+                                    containerColor = gold
                                 )
                             ) {
                                 Text(text = "Yes",
@@ -270,7 +330,7 @@ fun QuestionContent(
                             Button(
                                 onClick = { showDialog = false },
                                 colors = ButtonDefaults.buttonColors(
-                                    containerColor = orange
+                                    containerColor = gold
                                 )
                             ) {
                                 Text(text = "No",
@@ -280,8 +340,6 @@ fun QuestionContent(
                         }
                     )
                 }
-
-
             }
         }
     }

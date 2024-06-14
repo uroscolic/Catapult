@@ -1,6 +1,5 @@
 package com.rma.catapult.user.edit
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -34,7 +33,7 @@ import androidx.core.util.PatternsCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.rma.catapult.cat.details.orange
+import com.rma.catapult.cat.details.gold
 import com.rma.catapult.core.compose.AppIconButton
 import com.rma.catapult.core.theme.Samsung
 import com.rma.catapult.user.edit.UserEditContract.EditState
@@ -147,7 +146,7 @@ fun UserEditScreen(
                 enabled = enabled,
                 modifier = Modifier.width(200.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = orange
+                    containerColor = gold
                 )
             ) {
                 Text("Save changes", fontFamily = Samsung)
