@@ -26,16 +26,21 @@ class Repository @Inject constructor(
         }
 
         database.catDao().insertAll(cats = allCats.map{it.asCatDbModel()})
-//        for(cat in allCats){
-//            fetchCatImages(cat.id)
-//        }
+        for(cat in allCats){
+            fetchCatImagesIfNotInDatabase(cat.id)
+        }
 
     }
     suspend fun getCatWithImages(catId: String): CatWithImages? {
         return database.catDao().getCatWithImages(id = catId)
     }
     fun observeAllCats() = database.catDao().observeAll()
-
+    suspend fun fetchCatImagesIfNotInDatabase(id: String) {
+        val existingImages = database.catPhotoDao().getCatPhotos(id)
+        if (existingImages.isEmpty()) {
+            fetchCatImages(id)
+        }
+    }
     suspend fun fetchCatImages(id: String){
         val images = catApi.getCatImages(id = id)
         for(image in images){

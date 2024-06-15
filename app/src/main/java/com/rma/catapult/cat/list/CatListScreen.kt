@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
@@ -38,6 +39,7 @@ import androidx.compose.material3.ElevatedSuggestionChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -258,7 +260,6 @@ private fun AppDrawerActionItem(
         leadingContent = {
             Icon(imageVector = icon,
                 contentDescription = null,
-                tint = if (text == "Leaderboard") Color.Yellow else Color.Unspecified
             )
         },
         headlineContent = {
@@ -316,7 +317,7 @@ private fun CatListDrawer(
                         onClick = onLeaderboardClick,
                     )
                     AppDrawerActionItem(
-                        icon = Icons.Default.Favorite,
+                        icon = Icons.Default.PlayArrow,
                         text = "Quiz",
                         onClick = onQuizClick,
                     )
@@ -520,12 +521,14 @@ fun CatListItem(
             }
             for (i in 0 until 3) {
                 val leftPadding = if (i == 0) 10.dp else 5.dp
-                ElevatedSuggestionChip(
-                    modifier = Modifier
-                        .padding(start = leftPadding),
-                    onClick = {},
-                    label = { Text(text[randomNumbers[i]]) },
-                )
+                if(randomNumbers.size > i) {
+                    ElevatedSuggestionChip(
+                        modifier = Modifier
+                            .padding(start = leftPadding),
+                        onClick = {},
+                        label = { Text(text[randomNumbers[i]]) },
+                    )
+                }
             }
         }
         Row()

@@ -45,6 +45,7 @@ class QuestionsViewModel @Inject constructor(
                     generateQuestions()
                 }
         }
+
     }
 
     private fun generateQuestions()
@@ -67,11 +68,24 @@ class QuestionsViewModel @Inject constructor(
         var random = Random.nextBoolean()
         val text = if (random) type1 else type2
 
-        val cats = if (random) getTwoRandomCatsWithDifferentLifeSpans()
+        lateinit var catPhoto1: CatPhoto
+        lateinit var catPhoto2: CatPhoto
+
+        val cats: List<Cat> = if (random) getTwoRandomCatsWithDifferentLifeSpans()
         else getTwoRandomCatsWithDifferentWeights()
 
-        val catPhoto1 = getRandomCatPhoto(cats[0].id)
-        val catPhoto2 = getRandomCatPhoto(cats[1].id)
+        catPhoto1 = getRandomCatPhoto(cats[0].id)
+        while (catPhoto1.url.isBlank()) {
+            Log.d("PHOTO_ERROR", "Cat photo 1 is not valid, retrying...")
+            catPhoto1 = getRandomCatPhoto(cats[0].id)
+        }
+
+        catPhoto2 = getRandomCatPhoto(cats[1].id)
+        while (catPhoto2.url.isBlank()) {
+            Log.d("PHOTO_ERROR", "Cat photo 2 is not valid, retrying...")
+            catPhoto2 = getRandomCatPhoto(cats[1].id)
+        }
+
         Log.d("CATS1", cats[0].name)
         Log.d("CATS2", cats[1].name)
 

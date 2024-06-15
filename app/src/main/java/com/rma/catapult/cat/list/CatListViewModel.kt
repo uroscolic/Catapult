@@ -39,7 +39,6 @@ class CatListViewModel @Inject constructor(
     init {
         observeEvents()
         loadCats()
-
         observeCats()
     }
 
@@ -82,6 +81,8 @@ class CatListViewModel @Inject constructor(
 
     private fun loadCats() {
         viewModelScope.launch {
+            Log.d("CATSCATS", "STARTING CATS LOAD")
+
             setState { copy(loading = true) }
             try {
                 withContext(Dispatchers.IO) {
@@ -90,6 +91,7 @@ class CatListViewModel @Inject constructor(
             } catch (e: Exception) {
                 setState { copy(error = e)}
             } finally {
+                Log.d("CATSCATS", "Cats loaded")
                 setState { copy(loading = false) }
             }
         }

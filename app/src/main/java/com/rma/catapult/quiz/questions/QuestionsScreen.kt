@@ -3,6 +3,12 @@ package com.rma.catapult.quiz.questions
 import android.os.CountDownTimer
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -23,6 +29,7 @@ import com.rma.catapult.leaderboard.LeaderboardUiEvent
 import com.rma.catapult.leaderboard.LeaderboardViewModel
 import com.rma.catapult.leaderboard.model.LeaderboardPost
 import com.rma.catapult.quiz.questions.model.QuestionUiModel
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 fun NavGraphBuilder.questions(
@@ -43,59 +50,83 @@ fun NavGraphBuilder.questions(
     )
 }
 
-
 @Composable
-fun QuestionScreen(state: QuestionsState,
-                   toCatList: () -> Unit,
-                   eventPublisher: (LeaderboardUiEvent) -> Unit
-                   ) {
-
-
+fun QuestionScreen(
+    state: QuestionsState,
+    toCatList: () -> Unit,
+    eventPublisher: (LeaderboardUiEvent) -> Unit
+) {
     var score by remember { mutableIntStateOf(0) }
     var timesUp by remember { mutableStateOf(false) }
     var currentQuestionIndex by remember { mutableIntStateOf(0) }
+    var showQuestion by remember { mutableStateOf(true) }
 
+    BackHandler {}
 
-    BackHandler {
-
-    }
     if (state.questions.isNotEmpty()) {
         var timeLeft by remember { mutableIntStateOf(300) }
 
-        val timer = remember { object : CountDownTimer((timeLeft * 1000).toLong(), 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                timeLeft = (millisUntilFinished / 1000).toInt()
-            }
+        val timer = remember {
+            object : CountDownTimer((timeLeft * 1000).toLong(), 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    timeLeft = (millisUntilFinished / 1000).toInt()
+                }
 
-            override fun onFinish() {
-                timesUp = true
-            }
-        }.start() }
-        if(currentQuestionIndex >= state.questions.size || timesUp){
+                override fun onFinish() {
+                    timesUp = true
+                }
+            }.start()
+        }
+
+        if (currentQuestionIndex >= state.questions.size || timesUp) {
             timer.cancel()
-            EndOfQuizScreen(score = score,
+            EndOfQuizScreen(
+                score = score,
                 onHomeClick = toCatList,
                 timeLeft = timeLeft,
                 eventPublisher = eventPublisher
             )
-        }
-        else {
-            QuestionContent(
-                question = state.questions[currentQuestionIndex],
-                onAnswerSelected = {
-                    if (it) {
-                        score += 1
+        } else {
+            LaunchedEffect(currentQuestionIndex) {
+                showQuestion = false
+                delay(200)
+                showQuestion = true
+            }
+
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                AnimatedVisibility(
+                    visible = showQuestion,
+                    enter = fadeIn(animationSpec = tween(300)) + slideInHorizontally(
+                        initialOffsetX = { it },
+                        animationSpec = tween(300)
+                    ),
+                    exit = fadeOut(animationSpec = tween(300)) + slideOutHorizontally(
+                        targetOffsetX = { -it },
+                        animationSpec = tween(300)
+                    ),
+                ) {
+                    key(currentQuestionIndex) {
+                        QuestionContent(
+                            question = state.questions[currentQuestionIndex],
+                            onAnswerSelected = {
+                                if (it) {
+                                    score += 1
+                                }
+                                currentQuestionIndex += 1
+                            },
+                            number = currentQuestionIndex + 1,
+                            onGiveUp = toCatList,
+                            score = score,
+                            timeLeft = timeLeft,
+                        )
                     }
-                    currentQuestionIndex += 1
-                },
-                number = currentQuestionIndex + 1,
-                onGiveUp = toCatList,
-                score = score,
-                timeLeft = timeLeft,
-            )
+                }
+            }
         }
-    }
-    else {
+    } else {
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -105,11 +136,14 @@ fun QuestionScreen(state: QuestionsState,
     }
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EndOfQuizScreen(score: Int,
-                    onHomeClick: () -> Unit,
-                    timeLeft: Int,
-                    eventPublisher: (LeaderboardUiEvent) -> Unit
+fun EndOfQuizScreen(
+    score: Int,
+    onHomeClick: () -> Unit,
+    timeLeft: Int,
+    eventPublisher: (LeaderboardUiEvent) -> Unit
 ) {
     var points = score * 2.5 * (1 + (timeLeft + 120.0) / 300.0)
     if (points > 100.0)
@@ -117,82 +151,92 @@ fun EndOfQuizScreen(score: Int,
     Log.d("EndOfQuizScreen", "EndOfQuizScreen: $points")
     points = (points * 100).toInt() / 100.0
 
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("End of Quiz") },
+            )
+        },
+    ) { paddingValues ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            Text(
+                text = if (timeLeft == 0) "Time's Up!" else "Quiz Completed",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Text(
+                text = "Your Score: $points/100",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onBackground
+            )
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Text(text = if (timeLeft == 0) "Time's Up!" else "Quiz Completed",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-
-        )
-        Text(text = "Your Score: $points/100",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onBackground
-
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-        var flag by remember {
-            mutableStateOf(false)
-        }
-        if(!flag) {
-            flag = true
-            eventPublisher(
-                LeaderboardUiEvent.AddResultLocally(
-                    LeaderboardPost(
-                        result = points,
-                        category = 3
+            Spacer(modifier = Modifier.height(16.dp))
+            var flag by remember {
+                mutableStateOf(false)
+            }
+            if (!flag) {
+                flag = true
+                eventPublisher(
+                    LeaderboardUiEvent.AddResultLocally(
+                        LeaderboardPost(
+                            result = points,
+                            category = 3
+                        )
                     )
                 )
-            )
-        }
-        Button(onClick = {
-            eventPublisher(LeaderboardUiEvent.ShareResult(LeaderboardPost(result = points, category = 3)))
-            onHomeClick()
+            }
+            Button(
+                onClick = {
+                    eventPublisher(LeaderboardUiEvent.ShareResult(LeaderboardPost(result = points, category = 3)))
+                    onHomeClick()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = gold
+                )
+            ) {
+                Text(
+                    "Share Result",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
 
-        },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = gold
-            )
-        ) {
-            Text("Share Result",
-                fontSize = 18.sp,
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = onHomeClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = gold
+                )
+            ) {
+                Text(
+                    "Home",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                text = if (points < 40) "Better luck next time!"
+                else if (points >= 40 && points < 75) "Nice!" else "Wow, you are a genius!",
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
-
             )
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(onClick = onHomeClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = gold
-            )
-        ) {
-            Text("Home",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-
-            )
-        }
-        Spacer(modifier = Modifier.height(32.dp))
-        Text(text = if (points < 40) "Better luck next time!"
-        else if (points >= 40 && points < 75) "Nice!" else "Wow, you are a genius!",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-
-        )
-
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuestionContent(

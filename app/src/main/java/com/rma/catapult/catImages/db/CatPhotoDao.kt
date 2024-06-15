@@ -20,4 +20,7 @@ interface CatPhotoDao {
             LIMIT 1
             """)
     suspend fun getRandomCatPhoto(catId: String): CatPhoto
+
+    @Query("SELECT * FROM CatPhoto WHERE CatPhoto.ownerId = :catId")
+    suspend fun getCatPhotos(catId: String): List<CatPhoto>
 }

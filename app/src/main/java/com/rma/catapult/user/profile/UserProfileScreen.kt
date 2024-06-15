@@ -90,12 +90,10 @@ fun ProfileScreen(user: User, onEditClick: () -> Unit, onClose: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text(text = "${user.name} ${user.surname}", fontSize = 18.sp, modifier = Modifier
+            Text(text = "${user.name} ${user.surname} (${user.nickname})", fontSize = 18.sp, modifier = Modifier
                 .align(Alignment.Start)
                 .padding(start = 25.dp))
-            Text(text = "(${user.nickname})", fontSize = 18.sp, modifier = Modifier
-                .align(Alignment.Start)
-                .padding(start = 25.dp))
+
             Text(text = user.email, fontSize = 18.sp, modifier = Modifier
                 .align(Alignment.Start)
                 .padding(start = 25.dp))
@@ -126,14 +124,6 @@ fun ProfileScreen(user: User, onEditClick: () -> Unit, onClose: () -> Unit) {
 
             QuizResultItem(result = user.bestResult, bestRank = user.bestRank, bestResult = user.bestResult)
 
-            Divider(
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                thickness = 2.dp,
-                modifier = Modifier
-                    .padding(vertical = 16.dp)
-                    .shadow(2.dp, shape = MaterialTheme.shapes.medium)
-
-            )
 
             Text(
                 text = "Quiz Results",
