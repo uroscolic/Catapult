@@ -122,7 +122,7 @@ fun ProfileScreen(user: User, onEditClick: () -> Unit, onClose: () -> Unit) {
                 fontSize = 20.sp
             )
 
-            QuizResultItem(result = user.bestResult, bestRank = user.bestRank, bestResult = user.bestResult)
+            QuizResultItem(true,result = user.bestResult, bestRank = user.bestRank, bestResult = user.bestResult)
 
 
             Text(
@@ -135,7 +135,7 @@ fun ProfileScreen(user: User, onEditClick: () -> Unit, onClose: () -> Unit) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(user.results.reversed()) { result ->
-                    QuizResultItem(result, user.bestRank, user.bestResult)
+                    QuizResultItem(false, result, user.bestRank, user.bestResult)
                 }
             }
         }
@@ -143,8 +143,8 @@ fun ProfileScreen(user: User, onEditClick: () -> Unit, onClose: () -> Unit) {
 }
 
 @Composable
-fun QuizResultItem(result: QuizResult, bestRank: Int, bestResult: QuizResult) {
-    val isBestResult = result == bestResult
+fun QuizResultItem(flag: Boolean , result: QuizResult, bestRank: Int, bestResult: QuizResult) {
+    val isBestResult = result.result == bestResult.result
     val isBestRank = result.position == bestRank
 
     val borderColor = if (isBestResult || isBestRank) {
@@ -184,8 +184,10 @@ fun QuizResultItem(result: QuizResult, bestRank: Int, bestResult: QuizResult) {
             Text(text = "Result: ${result.result}", color = resultText)
             if (result.position != 0)
                 Text(text = "Position: #${result.position}", color = rankText)
-            else
-                Text(text = "Position: Not Ranked")
+            else {
+                if(!flag)
+                    Text(text = "Position: Not Ranked")
+            }
             Text(text = "Date: ${formatDate(result.createdAt)}")
         }
     }

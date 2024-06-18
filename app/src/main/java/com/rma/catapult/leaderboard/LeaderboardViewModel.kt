@@ -132,6 +132,7 @@ class LeaderboardViewModel @Inject constructor(
                     this.results.mapIndexed { index, result ->
                         if (index == this.results.size - 1) {
                             result.copy(position = quizResult.position)
+
                         } else {
                             result
                         }
