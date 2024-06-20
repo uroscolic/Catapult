@@ -32,7 +32,7 @@ class CatImageGridViewModel @Inject constructor (
     private fun setState(reducer: CatImageGridUiState.() -> CatImageGridUiState) = _state.update(reducer)
 
     init {
-        fetchImages()
+        //fetchImages()
         observeCatImages()
     }
 

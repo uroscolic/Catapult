@@ -32,7 +32,7 @@ class CatPhotoViewerViewModel @Inject constructor (
     private fun setState(reducer: CatPhotoViewerUiState.() -> CatPhotoViewerUiState) = _state.update(reducer)
 
     init {
-        fetchImages()
+        //fetchImages()
         observeCatImages()
     }
 
