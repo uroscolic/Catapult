@@ -108,7 +108,9 @@ fun AppNavigation() {
         )
         questions(route = "questions",
             toCatList = {
-                navController.navigate("allCats")
+                navController.navigate("allCats"){
+                    popUpTo("questions") { inclusive = true }
+                }
             }
         )
 
